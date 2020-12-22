@@ -17,11 +17,6 @@ type Game struct {
 	particles []*sand.Particle
 }
 
-type SandParticle struct {
-	img  *ebiten.Image
-	x, y float64
-}
-
 func (g *Game) Init() {
 	g.op = &ebiten.DrawImageOptions{}
 	g.img = ebiten.NewImage(sand.Size, sand.Size)
@@ -39,14 +34,14 @@ func (g *Game) Update() error {
 
 	x, y := ebiten.CursorPosition()
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		if x > 0 && y > 0 && x < BoxWidth && y < BoxHeight {
+		if x > 0 - sand.Size && y > 0 - sand.Size && x < BoxWidth + sand.Size && y < BoxHeight + sand.Size {
 			p := &sand.Particle{g.img, float64(x), float64(y)}
 			g.particles[y*BoxWidth+x] = p
 		}
 	}
 
-	doNotChange := map[int]int{}
-
+	doNotChange := map[int]bool{}
+	
 	for i, _ := range g.particles {
 		if g.particles[i] != nil {
 			p := g.particles[i]
@@ -57,14 +52,20 @@ func (g *Game) Update() error {
 			}
 
 			if p.Y < float64(BoxHeight-sand.Size) {
-				p.Y += 1
-				j := int(p.Y*BoxWidth + p.X)
-				g.particles[j] = p
-				doNotChange[j] = 0
-				g.particles[i] = nil
+
+				if g.particles[int((p.Y + 1) * BoxWidth + p.X)] == nil {
+					p.Y += 1
+					j := int(p.Y * BoxWidth + p.X)
+					g.particles[j] = p
+					doNotChange[j] = true
+					g.particles[i] = nil
+				} else {
+					doNotChange[i] = true
+				}
+				
 			} else {
 				p.Y = float64(BoxHeight - sand.Size)
-				j := int(p.Y*BoxWidth + p.X)
+				j := int(p.Y * BoxWidth + p.X)
 				g.particles[j] = p
 			}
 		}
