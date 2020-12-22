@@ -2,23 +2,23 @@ package main
 
 import (
 	"fmt"
+	"github.com/SnkSynthesis/sandbox/sand"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
-	"github.com/SnkSynthesis/sandbox/sand"
 )
 
 const zoom = 10
 const WindowHeight, WindowWidth = 800, 800
-const BoxWidth, BoxHeight = WindowWidth/zoom, WindowHeight/zoom
+const BoxWidth, BoxHeight = WindowWidth / zoom, WindowHeight / zoom
 
 type Game struct {
-	img *ebiten.Image
-	op *ebiten.DrawImageOptions
+	img       *ebiten.Image
+	op        *ebiten.DrawImageOptions
 	particles []*sand.Particle
 }
 
 type SandParticle struct {
-	img *ebiten.Image
+	img  *ebiten.Image
 	x, y float64
 }
 
@@ -30,30 +30,42 @@ func (g *Game) Init() {
 	g.particles = make([]*sand.Particle, BoxWidth*BoxHeight)
 
 	for i := 0; i <= 5; i += sand.Size {
-		p := &sand.Particle{g.img, float64(i), float64(i), 0, 0}
-		g.particles[i * BoxWidth + i] = p
+		p := &sand.Particle{g.img, float64(i), float64(i)}
+		g.particles[i*BoxWidth+i] = p
 	}
 }
 
 func (g *Game) Update() error {
-	
+
 	x, y := ebiten.CursorPosition()
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		if x > 0 && y > 0 && x < BoxWidth && y < BoxHeight {
-			p := &sand.Particle{g.img, float64(x), float64(y), 0, 0}
-			g.particles[y * BoxWidth + x] = p
+			p := &sand.Particle{g.img, float64(x), float64(y)}
+			g.particles[y*BoxWidth+x] = p
 		}
 	}
+
+	doNotChange := map[int]int{}
 
 	for i, _ := range g.particles {
 		if g.particles[i] != nil {
 			p := g.particles[i]
+
+			_, ok := doNotChange[i]
+			if ok {
+				continue
+			}
+
 			if p.Y < float64(BoxHeight-sand.Size) {
-				// p.Y += 1
-				g.particles[int(p.Y * BoxWidth + p.X)] = p
+				p.Y += 1
+				j := int(p.Y*BoxWidth + p.X)
+				g.particles[j] = p
+				doNotChange[j] = 0
 				g.particles[i] = nil
 			} else {
-				p.Y = float64(BoxHeight-sand.Size)
+				p.Y = float64(BoxHeight - sand.Size)
+				j := int(p.Y*BoxWidth + p.X)
+				g.particles[j] = p
 			}
 		}
 	}
@@ -72,11 +84,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return outsideWidth/zoom, outsideHeight/zoom
+	return outsideWidth / zoom, outsideHeight / zoom
 }
 
 func main() {
-	ebiten.SetMaxTPS(10)
 	ebiten.SetWindowSize(WindowWidth, WindowHeight)
 	ebiten.SetWindowTitle("Sandbox")
 
