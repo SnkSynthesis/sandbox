@@ -133,9 +133,14 @@ func main() {
 	fmt.Print("Enter zoom amount (Integers 1 and above; default: 8): ")
 	fmt.Scanf("%d", &zoom)
 
+	if zoom < 1 {
+		fmt.Println("Invalid number! Defaulting to 8...")
+		zoom = 8
+	}
+
 	fmt.Println()
 	fmt.Println(" --- Instructions --- ")
-	fmt.Println("[Space] - Clears all sand")
+	fmt.Println("[Space] Or [Resizing Window] - Clears all sand")
 	fmt.Println("[Right-Click] - Places sand")
 	fmt.Println(" --- Instructions --- ")
 	fmt.Println()
@@ -143,10 +148,6 @@ func main() {
 	fmt.Println("Enjoy!")
 	fmt.Println()
 
-	if zoom < 1 {
-		fmt.Println("Invalid number! Defaulting to 8...")
-		zoom = 8
-	}
 
 	game := &Game{}
 	game.Init()
