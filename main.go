@@ -61,6 +61,10 @@ func (g *Game) Update() error {
 		if x > 0-sand.Size && y > 0-sand.Size && x < BoxWidth && y < BoxHeight {
 			g.particles[y*BoxWidth+x] = &sand.Particle{g.img, float64(x), float64(y)}
 		}
+	} else if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
+		if x > 0-sand.Size && y > 0-sand.Size && x < BoxWidth && y < BoxHeight {
+			g.particles[y*BoxWidth+x] = nil
+		}
 	}
 
 	doNotChange := map[int]bool{}
@@ -141,13 +145,13 @@ func main() {
 	fmt.Println()
 	fmt.Println(" --- Instructions --- ")
 	fmt.Println("[Space] Or [Resizing Window] - Clears all sand")
-	fmt.Println("[Right-Click] - Places sand")
+	fmt.Println("[Left-Click] - Places sand")
+	fmt.Println("[Right-Click] - Removes sand")
 	fmt.Println(" --- Instructions --- ")
 	fmt.Println()
 
 	fmt.Println("Enjoy!")
 	fmt.Println()
-
 
 	game := &Game{}
 	game.Init()
