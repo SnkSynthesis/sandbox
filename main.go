@@ -9,7 +9,7 @@ import (
 
 var (
 	zoom                      = 8
-	WindowHeight, WindowWidth = 800, 800
+	WindowHeight, WindowWidth = 500, 500
 	BoxWidth, BoxHeight       = (WindowWidth / zoom), (WindowHeight / zoom)
 )
 
