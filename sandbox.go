@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/SnkSynthesis/sandbox/sand"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
 )
@@ -13,26 +12,32 @@ var (
 	BoxWidth, BoxHeight       = (WindowWidth / zoom), (WindowHeight / zoom)
 )
 
+const ParticleSize = 1
+type Particle struct {
+	Img  *ebiten.Image
+	X, Y float64
+}
+
 type Game struct {
 	img       *ebiten.Image
 	col       uint8
 	bCol      bool
 	op        *ebiten.DrawImageOptions
-	particles []*sand.Particle
+	particles []*Particle
 }
 
 func (g *Game) Init() {
 	g.op = &ebiten.DrawImageOptions{}
-	g.img = ebiten.NewImage(sand.Size, sand.Size)
+	g.img = ebiten.NewImage(ParticleSize, ParticleSize)
 	g.img.Fill(color.RGBA{255, 255, 0, 255})
 
-	g.particles = make([]*sand.Particle, BoxWidth*BoxHeight)
+	g.particles = make([]*Particle, BoxWidth*BoxHeight)
 }
 
 func (g *Game) Update() error {
 
 	if ebiten.IsKeyPressed(ebiten.KeySpace) {
-		g.particles = make([]*sand.Particle, len(g.particles))
+		g.particles = make([]*Particle, len(g.particles))
 	}
 
 	WindowWidth, WindowHeight = ebiten.WindowSize()
@@ -40,7 +45,7 @@ func (g *Game) Update() error {
 
 	diff := BoxWidth*BoxHeight - len(g.particles)
 	if diff != 0 {
-		g.particles = make([]*sand.Particle, len(g.particles)+diff)
+		g.particles = make([]*Particle, len(g.particles)+diff)
 	}
 
 	if g.bCol {
@@ -58,11 +63,11 @@ func (g *Game) Update() error {
 
 	x, y := ebiten.CursorPosition()
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		if x > 0-sand.Size && y > 0-sand.Size && x < BoxWidth && y < BoxHeight {
-			g.particles[y*BoxWidth+x] = &sand.Particle{g.img, float64(x), float64(y)}
+		if x > 0-ParticleSize && y > 0-ParticleSize && x < BoxWidth && y < BoxHeight {
+			g.particles[y*BoxWidth+x] = &Particle{g.img, float64(x), float64(y)}
 		}
 	} else if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-		if x > 0-sand.Size && y > 0-sand.Size && x < BoxWidth && y < BoxHeight {
+		if x > 0-ParticleSize && y > 0-ParticleSize && x < BoxWidth && y < BoxHeight {
 			g.particles[y*BoxWidth+x] = nil
 		}
 	}
@@ -78,14 +83,14 @@ func (g *Game) Update() error {
 				continue
 			}
 
-			if p.Y < float64(BoxHeight-sand.Size) {
+			if p.Y < float64(BoxHeight-ParticleSize) {
 				if int(p.Y+1)*BoxWidth+int(p.X) < len(g.particles) && g.particles[int(p.Y+1)*BoxWidth+int(p.X)] == nil {
 					p.Y += 1
 					j := int(p.Y)*BoxWidth + int(p.X)
 					g.particles[j] = p
 					doNotChange[j] = true
 					g.particles[i] = nil
-				} else if int(p.X+1) < BoxWidth-sand.Size && int(p.Y+1)*BoxWidth+int(p.X+1) < len(g.particles) && g.particles[int(p.Y+1)*BoxWidth+int(p.X+1)] == nil {
+				} else if int(p.X+1) < BoxWidth-ParticleSize && int(p.Y+1)*BoxWidth+int(p.X+1) < len(g.particles) && g.particles[int(p.Y+1)*BoxWidth+int(p.X+1)] == nil {
 					p.X += 1
 					p.Y += 1
 					j := int(p.Y)*BoxWidth + int(p.X)
@@ -103,7 +108,7 @@ func (g *Game) Update() error {
 					doNotChange[i] = true
 				}
 			} else {
-				p.Y = float64(BoxHeight - sand.Size)
+				p.Y = float64(BoxHeight - ParticleSize)
 				j := int(p.Y)*BoxWidth + int(p.X)
 				if j > 0 && j < len(g.particles) {
 					g.particles[j] = p
