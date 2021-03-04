@@ -57,7 +57,7 @@ func (g *Game) Update() error {
 	}
 
 	WindowWidth, WindowHeight = ebiten.WindowSize()
-	BoxWidth, BoxHeight = (WindowWidth / Zoom), (WindowHeight / Zoom)
+	BoxWidth, BoxHeight = (WindowWidth/Zoom)+1, (WindowHeight/Zoom)+1
 
 	diff := BoxWidth*BoxHeight - len(g.particles)
 	if diff != 0 {
