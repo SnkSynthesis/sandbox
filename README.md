@@ -9,7 +9,7 @@ Sand Simulator/Cellular Automaton written in Go using [Ebiten](https://github.co
 
 Once window is open one can do the following:
 
-* `[Space] Or [Resizing Window]` - Clears all sand
+* `[Space]` Or `[Resizing Window]` - Clears all sand
 * `[Left-Click]` - Places sand
 * `[Right-Click]` - Removes sand
 
