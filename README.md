@@ -1,6 +1,8 @@
 # Sandbox
 Sand Simulator/Cellular Automaton written in Go using [Ebiten](https://github.com/hajimehoshi/ebiten)
 
+<img src="screenshot.png" width="75%" height="75%">
+
 ## Instructions
 
 1. Clone the project: `git clone https://github.com/SnkSynthesis/sandbox`

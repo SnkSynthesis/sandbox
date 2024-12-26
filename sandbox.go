@@ -66,7 +66,7 @@ func (g *Game) Update() error {
 
 	if g.bCol {
 		g.col--
-		if g.col == 150 {
+		if g.col == 230 {
 			g.bCol = false
 		}
 	} else {
